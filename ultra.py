@@ -20,6 +20,7 @@ GPIO_ECHO = 24
 GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
 GPIO.setup(GPIO_ECHO, GPIO.IN)
 c_speed = 343000 #speed of sound in mm/s
+continuous = 0
 
 def distance():
 	#set trigger to high
@@ -49,25 +50,33 @@ def time_now():
 	current_time = now.strftime("%H:%M:%S")
 	return current_time
 
-def main():
-	try:
-		dist = 1000
-		count = 0
-		while count < 10:
-			dist = distance()			
-			if dist > 100:
-				print (time_now() + " Distance = %.1f mm" % dist)
-			elif dist <= 100:
-				count += 1
-				print (time_now() + " Distance = %.1f mm!!! Count: %d" % (dist, count))
-			time.sleep(60)
-		print(time_now() + "count: %d whoa too close" % count )
-		GPIO.cleanup()
-	except KeyboardInterrupt:
-		print ("Ultra stopped by User")
-		GPIO.cleanup()
+def main(continuous):
+	continuous = continuous
+	if continuous:
+		try:
+			dist = 1000
+			count = 0
+			while count < 10:
+				dist = distance()			
+				if dist > 100:
+					print (time_now() + " Distance = %.1f mm" % dist)
+				elif dist <= 100:
+					count += 1
+					print (time_now() + " Distance = %.1f mm!!! Count: %d" % (dist, count))
+				time.sleep(60)
+			print(time_now() + "count: %d whoa too close" % count )
+			GPIO.cleanup()
+		except KeyboardInterrupt:
+			print ("Ultra stopped by User")
+			GPIO.cleanup()
+	else:
+		dist = distance()
+		f = open(time_now() + " distance.txt", "a")
+		f.write(time_now() + " Distance = %.1f mm" % dist)
+		f.close()
+
 
 if __name__ == '__main__':
-	main()
+	main(continuous)
 
 
