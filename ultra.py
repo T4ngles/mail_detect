@@ -69,11 +69,21 @@ def main(continuous):
 		except KeyboardInterrupt:
 			print ("Ultra stopped by User")
 			GPIO.cleanup()
-	else:
-		dist = distance()
-		f = open(time_now() + " distance.txt", "a")
-		f.write(time_now() + " Distance = %.1f mm" % dist)
-		f.close()
+	else:		
+		count = 0
+		mail_count = 0
+		while count < 10:
+			dist = distance()
+			if dist <= 100:
+				mail_count +=1
+			count += 1
+			print(count, " ",dist)
+			time.sleep(1)
+		if mail_count>5:
+			f = open(str(mail_count/10*100)+"% sure that you have mail " +time_now() + ".txt", "a")
+			f.write(time_now() + " Distance = %.1f mm" % dist)
+			f.close()
+		GPIO.cleanup()
 
 
 if __name__ == '__main__':
